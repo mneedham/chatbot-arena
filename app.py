@@ -63,9 +63,10 @@ body_1 = col1.empty()
 body_2 = col2.empty()
 
 with bottom():
+    voting_buttons = st.empty()
     prompt = st.chat_input("Message Ollama")
     with stylable_container(
-        key="green_button",
+        key="next_round_button",
         css_styles="""
             button {
                 background-color: #CCCCCC;
@@ -75,8 +76,8 @@ with bottom():
             }
             """,
     ):
-        next_round = st.button("Next Round")
-        if next_round:
+        new_round = st.button("New Round", key="new_round")
+        if new_round:
             clear_everything()
             
 
@@ -136,20 +137,35 @@ async def run_prompt(placeholder, model, message_history):
                 
     message_history.append({"role": "assistant", "content": streamed_text})
 
-@st.experimental_dialog("Cast your vote")
+
+def do_vote(choice):
+    st.session_state.vote = {"choice": choice}
+
+
 def vote():
-    st.write(f"Which model was best?")
-    item = st.radio("Which model was best?", options=["Model 1", "Model 2", "Neither"])
-    if st.button("Submit"):
-        st.session_state.vote = {"item": item}
-        st.rerun()
+    with voting_buttons.container():
+        with stylable_container(
+            key="voting_button",
+            css_styles="""
+                button {
+                    background-color: #CCCCCC;
+                    color: black;
+                    border-radius: 10px;
+                    width: 100%;
+                }
+
+                """,
+        ):
+            col1, col2, col3 = st.columns(3)
+            model1 = col1.button("Model 1", key="model1", on_click=do_vote, args=["model1"])
+            model2 = col2.button("Model 2", key="model2", on_click=do_vote, args=["model2"])
+            neither = col3.button("Both the same ", key="same", on_click=do_vote, args=["same"])
 
 async def main():
     await asyncio.gather(
         run_prompt(body_1,  model=model_1, message_history=st.session_state.messages1),
         run_prompt(body_2,  model=model_2, message_history=st.session_state.messages2)
     )
-    await asyncio.sleep(0.5)
     if "vote" not in st.session_state:
         vote()
 
