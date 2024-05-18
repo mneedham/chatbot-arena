@@ -1,4 +1,5 @@
 import time
+import ollama
 import json
 import streamlit as st
 
@@ -21,6 +22,14 @@ def style_page():
 
   img.spinner {
       margin: 0 0 0 0;
+  }
+
+  div.block-container {
+    padding-top: 2rem;
+  }
+
+  ul[data-testid="stSidebarNavItems"] {
+    padding-top: 3.5rem;
   }
   </style>
   """)
@@ -65,3 +74,12 @@ def create_logger(name, log_file_path):
         ],
     )
     return struct_logger
+
+def all_chat_models():
+    return [
+        (m['name'])
+        for m in ollama.list()["models"]  
+        if m["details"]["family"] in ["llama", "gemma"]
+        and "clip" not in (m["details"]["families"] or [])
+        and m["details"]["parameter_size"] in ['3B', '4B', '7B', '8B', '9B']
+    ]
