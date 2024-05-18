@@ -1,7 +1,11 @@
 import time
-import logging
 import json
 import streamlit as st
+
+import logging
+import structlog
+from pathlib import Path
+
 
 def style_page():
   st.html("""
@@ -31,3 +35,33 @@ def clear_everything():
 
 def meta_formatting(color, prefix, model_name):
     return f"## :{color}[{prefix}: {model_name}]"
+
+
+def create_logger(name, log_file_path):
+    # Create a logger
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+
+    # Remove existing handlers if any (important for avoiding duplicates)
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
+    # Create and add a file handler
+    log_file = Path(log_file_path)
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setFormatter(logging.Formatter("%(message)s"))
+    logger.addHandler(file_handler)
+    
+    # Ensure no propagation to the root logger to avoid duplicate logs
+    logger.propagate = False
+
+    # Wrap the logger with structlog
+    struct_logger = structlog.wrap_logger(
+        logger,
+        processors=[
+            structlog.processors.add_log_level,
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.JSONRenderer(),
+        ],
+    )
+    return struct_logger

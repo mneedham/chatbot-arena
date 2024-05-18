@@ -7,24 +7,13 @@ from openai import AsyncOpenAI
 from streamlit_extras.stylable_container import stylable_container
 from streamlit_extras.bottom_container import bottom
 import random
-from utils import style_page, clear_everything, meta_formatting
+from utils import style_page, clear_everything, meta_formatting, create_logger
 import uuid
 
 from functools import partial
-import structlog
-from pathlib import Path
 
-structlog.configure(
-    processors=[
-        structlog.processors.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.JSONRenderer(),
-    ],
-    logger_factory=structlog.WriteLoggerFactory(
-        file=Path("app").with_suffix(".log").open("at")
-    ),
-)
-logger = structlog.get_logger()
+voting_logger = create_logger("voting", "voting.log")
+requests_logger = create_logger("requests", "requests.log")
 
 title = "Ollama Chatbot Arena"
 st.set_page_config(page_title=title, layout="wide")
@@ -116,7 +105,7 @@ async def run_prompt(placeholder, model, message_history):
     ]
 
     request_id = str(uuid.uuid4())
-    logger.info("Request starts", id=request_id, model=model, prompt=message_history[-1]["content"])
+    requests_logger.info("Request starts", id=request_id, model=model, prompt=message_history[-1]["content"])
     stream = await client.chat.completions.create(
         model=model,
         messages=messages,
@@ -133,14 +122,24 @@ async def run_prompt(placeholder, model, message_history):
                     chat_entry.write(message['content'])
                 assistant = st.chat_message(name="assistant")
                 assistant.write(streamed_text)    
-    logger.info("Request finished", id=request_id, model=model, prompt=message_history[-1]["content"])
+    requests_logger.info("Request finished", id=request_id, model=model, response=streamed_text)
                 
     message_history.append({"role": "assistant", "content": streamed_text})
 
 
 def do_vote(choice):
     st.session_state.vote = {"choice": choice}
+    voting_logger.info("Vote", model1=model_1, model2=model_2, choice=choice)
 
+    if choice == "model1":
+        vote_choice = model_1
+    elif choice == "model2":
+        vote_choice = model_2
+    else:
+        vote_choice = "Both the same"
+
+    st.toast(f"""Vote cast: **{vote_choice}**  
+    Click 'new round' to compare another two models.""", icon='🗳️')
 
 def vote():
     with voting_buttons.container():
@@ -157,9 +156,9 @@ def vote():
                 """,
         ):
             col1, col2, col3 = st.columns(3)
-            model1 = col1.button("Model 1", key="model1", on_click=do_vote, args=["model1"])
-            model2 = col2.button("Model 2", key="model2", on_click=do_vote, args=["model2"])
-            neither = col3.button("Both the same ", key="same", on_click=do_vote, args=["same"])
+            model1 = col1.button("Model 1 👈", key="model1", on_click=do_vote, args=["model1"])
+            model2 = col2.button("Model 2 👉", key="model2", on_click=do_vote, args=["model2"])
+            neither = col3.button("Both the same 🤝", key="same", on_click=do_vote, args=["same"])
 
 async def main():
     await asyncio.gather(
