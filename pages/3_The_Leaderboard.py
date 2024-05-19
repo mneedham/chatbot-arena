@@ -17,7 +17,12 @@ st.write("The models are ranked using Microsoft's TrueSkill algorithm.")
 models = all_chat_models()
 
 models_with_ratings = {
-  model: {"rating": Rating(), "comparisons": 0} for model in models
+  name: {
+    "size": size,
+    "rating": Rating(), 
+    "comparisons": 0
+  } 
+  for name, size in models
 }
 
 with jsonlines.open('voting.log') as reader:
@@ -41,6 +46,7 @@ with jsonlines.open('voting.log') as reader:
 
 df = pd.DataFrame({
     "Name": models_with_ratings.keys(),
+    "Size": [v['size'] for k,v in models_with_ratings.items()],
     "Rating": [v['rating'].mu for k,v in models_with_ratings.items()],
     "Certainty": [v['rating'].sigma for k,v in models_with_ratings.items()],
     "Comparisons": [v['comparisons'] for k,v in models_with_ratings.items()]

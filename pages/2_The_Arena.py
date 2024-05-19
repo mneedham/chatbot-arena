@@ -21,8 +21,11 @@ st.set_page_config(page_title=title, layout="wide")
 style_page()
 st.title(title)
 
-if not "models" in st.session_state or len(st.session_state.models) == 0:
-    st.write("You haven't selected any models, so the arena won't be much use!")
+if not "models" in st.session_state or len(st.session_state.models) < 2:
+    if len(st.session_state.models) == 0:
+        st.write("You haven't selected any models, so the arena won't be much use!")
+    if len(st.session_state.models) == 1:    
+        st.write("You have only selected 1 mode. Go back and select one more!")
     if st.button("Select models"):
         st.switch_page("pages/1_Select_Models.py")
     st.stop()
@@ -174,7 +177,7 @@ def vote():
                 }
                 """,
         ):
-            new_round = st.button("New Round", key="new_round", on_click=clear_everything)
+            new_round = st.button("New Round", key="new_round_later", on_click=clear_everything)
 
 async def main():
     await asyncio.gather(

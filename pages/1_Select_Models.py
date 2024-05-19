@@ -20,9 +20,7 @@ if "select_models" not in st.session_state:
     st.session_state.select_models = st.session_state.models
 
 
-models = all_chat_models()
-
-
+models = [name for name, size in all_chat_models()]
 
 options = st.multiselect(
     "Choose models",
@@ -33,6 +31,7 @@ options = st.multiselect(
 
 if len(options) > 0:
   st.session_state.models = options
+
   with stylable_container(
       key="next_round_button",
       css_styles="""
@@ -47,7 +46,12 @@ if len(options) > 0:
           }
           """,
   ):
-    st.write("""***  
-Models selected: It's time to enter the arena! 👇""")
-    if st.button("Enter the Chatbot Arena"):
-      st.switch_page("pages/2_The_Arena.py")
+    if len(options) == 1:
+      st.write("""***""")
+      st.write("One model selected. Select one more.")
+      st.stop()
+    else:
+        st.write(f"""***  
+{len(options)} Models selected - It's time to enter the arena! 👇""")
+        if st.button("Enter the Chatbot Arena"):
+          st.switch_page("pages/2_The_Arena.py")

@@ -77,9 +77,9 @@ def create_logger(name, log_file_path):
 
 def all_chat_models():
     return [
-        (m['name'])
+        (m['name'], m['details']['parameter_size'])
         for m in ollama.list()["models"]  
         if m["details"]["family"] in ["llama", "gemma"]
         and "clip" not in (m["details"]["families"] or [])
-        and m["details"]["parameter_size"] in ['3B', '4B', '7B', '8B', '9B']
+        and m["details"]["parameter_size"] in ['1B', '3B', '4B', '7B', '8B', '9B']
     ]
