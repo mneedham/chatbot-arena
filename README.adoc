@@ -5,7 +5,8 @@ It's inspired by the https://lmsys.org/blog/2023-05-03-arena/[LMSYS Chatbot Aren
 
 image::images/chatbot-arena.jpeg[][]
 
-== Pre-requisites
+
+== Pre-requisites
 
 Make sure that Ollama is running and that it can load multiple models at the same time.
 You can do this by running the following command:
@@ -18,3 +19,7 @@ OLLAMA_MAX_LOADED_MODELS=4 ollama serve
 
 == How do I run the app?
 
+[source, bash]
+----
+poetry run streamlit run Ollama_Chatbot_Arena.py --server.headless True
+----
