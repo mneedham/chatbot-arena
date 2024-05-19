@@ -5,6 +5,7 @@ from utils import all_chat_models, style_page
 
 def update_selected_models():
   st.session_state.models = st.session_state.select_models
+  st.session_state.selected_models = []
 
 
 title = "🔍 Select the models"
@@ -17,7 +18,7 @@ if not "models" in st.session_state:
   st.session_state.models = []
 
 if "select_models" not in st.session_state:
-    st.session_state.select_models = st.session_state.models
+    st.session_state.select_models = st.session_state.models    
 
 
 models = [name for name, size in all_chat_models()]

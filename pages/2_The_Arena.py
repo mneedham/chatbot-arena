@@ -24,7 +24,7 @@ st.title(title)
 if not "models" in st.session_state:
     st.session_state.models = []
 
-if len(st.session_state.models) < 2:
+if not "models" in st.session_state or len(st.session_state.models) < 2:
     if len(st.session_state.models) == 0:
         st.write("You haven't selected any models, so the arena won't be much use!")
     if len(st.session_state.models) == 1:    
@@ -81,8 +81,10 @@ with bottom():
 
 # Render existing state
 if "vote" in st.session_state:
-    meta_1.write(partial(meta_formatting, "blue", "Model 1")(model_1))
-    meta_2.write(partial(meta_formatting, "red", "Model 2")(model_2))
+    model_1_display= model_1.replace(":", "\\:")
+    model_2_display= model_2.replace(":", "\\:")
+    meta_1.write(partial(meta_formatting, "blue", "Model 1")(model_1_display))
+    meta_2.write(partial(meta_formatting, "red", "Model 2")(model_2_display))
 
 if len(st.session_state.messages1) > 0 or len(st.session_state.messages2) > 0:
     with body_1.container():
@@ -140,14 +142,17 @@ def do_vote(choice):
     st.session_state.vote = {"choice": choice}
     voting_logger.info("Vote", model1=model_1, model2=model_2, choice=choice)
 
-    if choice == "model1":
-        vote_choice = f":blue[{model_1}]"
+    model_1_display= model_1.replace(":", "\\:")
+    model_2_display= model_2.replace(":", "\\:")
+
+    if choice == "model1":        
+        vote_choice = f":blue[{model_1_display}]"
     elif choice == "model2":
-        vote_choice = f":red[{model_2}]"
+        vote_choice = f":red[{model_2_display}]"
     else:
         vote_choice = ":grey[Both the same]"
 
-    st.toast(f"""##### :blue[{model_1}] vs :red[{model_2}]    
+    st.toast(f"""##### :blue[{model_1_display}] vs :red[{model_2_display}]    
 ###### Vote cast: {vote_choice}""", icon='🗳️')
 
 def vote():
