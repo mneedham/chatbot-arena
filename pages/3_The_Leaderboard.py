@@ -25,7 +25,7 @@ models_with_ratings = {
   for name, size in models
 }
 
-with jsonlines.open('voting.log') as reader:
+with jsonlines.open('logs/voting.log') as reader:
     for row in reader:
       if row["model1"] in models_with_ratings and row["model2"] in models_with_ratings:
         m1 = models_with_ratings[row["model1"]]["rating"]

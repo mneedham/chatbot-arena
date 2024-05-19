@@ -1,0 +1,20 @@
+= Ollama Chatbot Arena
+
+This is an app that lets you do a blind comparison of https://ollama.com[Ollama models^] and vote for which ones answered the prompt better.
+It's inspired by the https://lmsys.org/blog/2023-05-03-arena/[LMSYS Chatbot Arena^]  that lets you do the same thing for a whole variety of hosted models.
+
+image::images/chatbot-arena.jpeg[][]
+
+== Pre-requisites
+
+Make sure that Ollama is running and that it can load multiple models at the same time.
+You can do this by running the following command:
+
+[source, bash]
+----
+OLLAMA_MAX_LOADED_MODELS=4 ollama serve
+----
+
+
+== How do I run the app?
+

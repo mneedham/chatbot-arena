@@ -13,15 +13,18 @@ import uuid
 
 from functools import partial
 
-voting_logger = create_logger("voting", "voting.log")
-requests_logger = create_logger("requests", "requests.log")
+voting_logger = create_logger("voting", "logs/voting.log")
+requests_logger = create_logger("requests", "logs/requests.log")
 
 title = "🏟️ The Arena"
 st.set_page_config(page_title=title, layout="wide")
 style_page()
 st.title(title)
 
-if not "models" in st.session_state or len(st.session_state.models) < 2:
+if not "models" in st.session_state:
+    st.session_state.models = []
+
+if len(st.session_state.models) < 2:
     if len(st.session_state.models) == 0:
         st.write("You haven't selected any models, so the arena won't be much use!")
     if len(st.session_state.models) == 1:    
