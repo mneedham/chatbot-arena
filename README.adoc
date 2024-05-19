@@ -18,6 +18,16 @@ OLLAMA_MAX_LOADED_MODELS=4 ollama serve
 
 == How do I run the app?
 
+Clone the repository:
+
+[source, bash]
+----
+git clone git@github.com:mneedham/chatbot-arena.git
+cd chatbot-arena
+----
+
+And then run it using Poetry:
+
 [source, bash]
 ----
 poetry run streamlit run Ollama_Chatbot_Arena.py --server.headless True
