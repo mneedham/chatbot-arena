@@ -5,9 +5,6 @@ from streamlit_extras.stylable_container import stylable_container
 from streamlit_extras.bottom_container import bottom
 from utils import style_page, clear_everything, meta_formatting, create_logger
 
-voting_logger = create_logger("voting", "voting.log")
-requests_logger = create_logger("requests", "requests.log")
-
 title = "🤖 Ollama Chatbot Arena"
 st.set_page_config(page_title=title, layout="wide")
 style_page()
