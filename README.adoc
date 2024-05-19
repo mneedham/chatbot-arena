@@ -25,4 +25,4 @@ poetry run streamlit run Ollama_Chatbot_Arena.py --server.headless True
 
 Navigate to http://localhost:8501 and you should see the following
 
-image::images/home.home.png[]
+image::images/home.png[]
